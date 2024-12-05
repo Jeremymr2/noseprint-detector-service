@@ -6,7 +6,7 @@ from app.api.model import compare_images
 
 model = APIRouter()
 
-@model.get("/")
+@model.post("/")
 async def predict(first_image, second_image):
     try:
         response = compare_images(first_image, second_image)
