@@ -13,4 +13,8 @@ app.add_middleware(
  allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+ return {"message": "Model v1"}
+
 app.include_router(model, prefix='/api/v1/predict')
