@@ -1,12 +1,6 @@
-from http.client import HTTPException
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from app.api.model import compare_images, load_model
-from fastapi import UploadFile
-import requests
-import numpy as np
-from io import BytesIO
-from PIL import Image
 import base64
 
 model = APIRouter()
