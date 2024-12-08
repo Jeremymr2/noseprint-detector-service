@@ -5,7 +5,8 @@ import numpy as np
 from tensorflow.keras import layers
 from tensorflow.keras.models import Model
 import cv2
-
+import ast
+import re
 
 # load model
 def load_model():
@@ -70,18 +71,24 @@ def reshape_numpy(img):
     return img
 
 # main function
-def compare_images(first_img: np.ndarray, second_img: np.ndarray, model = Depends(load_model)):
+def compare_images(first_img, second_img, model):
     if not model:
         raise HTTPException(status_code=404, detail=f"Model not found")
-    # if first_img is a file
-    # np_array = np.frombuffer(first_img, dtype=np.uint8)
-    # img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-    img_numpy = preprocess_numpy(first_img)
-    img_numpy = reshape_numpy(img_numpy)
+
+    np_array = np.frombuffer(first_img, dtype=np.uint8)
+    img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
+
     # if second_img is a file
-    # np_url = np.frombuffer(response.content, dtype=np.uint8)
-    # img_url = cv2.imdecode(np_url, cv2.IMREAD_COLOR)
-    img_url = preprocess_numpy(second_img)
+    np_url = np.frombuffer(second_img, dtype=np.uint8)
+    img_url = cv2.imdecode(np_url, cv2.IMREAD_COLOR)
+
+    img_numpy = preprocess_numpy(img)
+    img_numpy = reshape_numpy(img_numpy)
+    img_url = preprocess_numpy(img_url)
     img_url = reshape_numpy(img_url)
     result = model.predict([img_numpy, img_url])
-    return result
+    # Si el resultado es un valor de tipo numpy.float32, conviértelo a float
+    result_value = float(result[0])
+
+    # Devolver la respuesta en formato JSON, con 'result' como clave
+    return {"result": result_value}
